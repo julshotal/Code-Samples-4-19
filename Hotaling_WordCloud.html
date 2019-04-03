@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Load Text - Drag & Drop</title>
+	<style>
+		body{font-family:sans-serif;}
+		.hover{
+    	background-color: rgba(0,191,165,.04);
+		}
+		canvas {
+			background-color: black;
+		}
+	</style>
+</head>
+<body>
+<h1>Load Text - Drag &amp; Drop</h1>
+<section>
+	<canvas width="1400" height="600">Drag a text file onto me!</canvas>
+</section>
+<script>
+
+let dropbox = document.querySelector("canvas");
+dropbox.ondragenter = onDragenter;
+dropbox.ondragover = onDragover;
+dropbox.ondrop = onDrop;
+
+let ctx = dropbox.getContext('2d');
+
+function onDragenter(e){
+	e.stopPropagation();
+  	e.preventDefault();
+ 	e.target.classList.add("hover");
+}
+
+function onDragover(e){
+	e.stopPropagation();
+  	e.preventDefault();
+}
+
+function onDrop(e){
+	e.stopPropagation();
+	e.preventDefault();
+	e.target.classList.remove("hover");
+		let file = e.dataTransfer.files[0];
+		if(file){
+			let reader = new FileReader();
+			reader.onload = dataLoaded;
+			reader.readAsText(file);
+		}
+}
+
+let counts = {};
+let keys = [];
+let nums = [];
+
+function dataLoaded(e){
+		let s = e.target.result;
+	//	dropbox.innerHTML = s;
+		
+		// 1- create an array
+		let words = s.split(/\W+/); //split on anything that's not alphanumeric
+		//console.log(words);
+		
+		
+		const stopwords = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any","are","aren't","as","at","be","because","been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our","ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up","very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves"];
+	
+		// 2 - loop through array, count up frequency of each word
+		for(let w of words){
+			w = w.toLowerCase();
+			// get rid of numbers
+			if (/\d+/.test(w)) continue; // if there's a number, skip
+			
+			// get rid of stop words
+			if (stopwords.includes(w)) continue; // if w is in the stopwords array, skip
+			
+			// get rid of 1-character words
+			if (w.length<2) continue; // if w.length is less than 2, skip
+			
+			if (counts[w] === undefined){
+				counts[w] = 1;
+			}else{
+				counts[w] ++;
+			}
+		}
+		
+	// 3 - now, `counts` holds all of the words, and their frequencies
+		
+		// 4 - array of all of the words that we interested in (NOT stopwords)
+		keys = Object.keys(counts); //.sort(); // sorted alphabetically descending
+		nums = Object.values(counts);
+
+		
+		// sort by word frequency
+		// if we return negative number, a goes before b
+		// if we return positive number, b goes before a
+		function comparator(a,b){
+			let countA = counts[a];
+			let countB = counts[b];
+			return countB - countA;
+		}
+		
+		keys.sort(comparator)
+		
+		keys = keys.filter(element => !stopwords.includes(element));
+		
+		for(let i = 0; i < 15; i++){
+			ctx.save();
+			ctx.fillStyle = getRandomColor(255);
+			ctx.textAlign = "center";
+			//25 is default font size
+			ctx.font = nums[i] + 25 + "px Impact";
+			ctx.fillText(keys[i], getRandomInt(100, 1300), getRandomInt(100, 500));
+
+			//print the values of the 15 words chosen
+			let p = document.createElement("p");
+			p.innerHTML = `"${keys[i]}" : ${counts[keys[i]]}`;
+			document.body.appendChild(p);
+			ctx.restore();
+		}
+
+		function getRandomColor(max) {
+			const getByte = _ => 55 + Math.round(Math.random() * max);
+			//return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+			return `rgba(${getByte()}, ${getByte()}, ${getByte()}, .8)`;
+		}
+		
+		function getRandomInt(min, max) {
+			return Math.round(Math.random() * (max - min)) + min;
+		}
+}
+
+</script>
+</body>
+</html>
+
