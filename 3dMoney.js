@@ -1,38 +1,47 @@
 
-   //$10
+   //Code for rotating bills
+
+    //create scene and persepctive camera
     var sceneBill = new THREE.Scene();
     var cameraBill = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 
+    //create transparent renderer and fill div size, append to div 
     var renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.querySelector('#ten').appendChild(renderer.domElement);
 
+    //set camera position
     cameraBill.position.z = 3;
-
+      
+    //two planes, for front and back
     var frontB = new THREE.PlaneGeometry(2, 1, 1, 1);
     var backB = new THREE.PlaneGeometry(2, 1, 1, 1);
 
+    //rotate back plane
     backB.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
 
+    //load texture images for front and back (front and back of bill)
+    //create new mesh material with those textures mapped on
     var textureFrontB = new THREE.TextureLoader().load('img/tenfront.png' );      
     var textureBackB = new THREE.TextureLoader().load('img/tenback.png' );
 
     var material1B = new THREE.MeshBasicMaterial( { color: 0xffffff, map: textureFrontB } );
     var material2B = new THREE.MeshBasicMaterial( { color: 0xffffff, map: textureBackB } );
 
-    // card
+    // create a new 3D object
     bill = new THREE.Object3D();
 
-            // mesh
+    // create new mesh and add to bill object
     mesh1B = new THREE.Mesh( backB, material1B );
     bill.add( mesh1B );
     mesh2B = new THREE.Mesh( frontB, material2B );
     bill.add( mesh2B );
 
 
+    //ad bill to scene
     sceneBill.add( bill );
 
-
+   //rotate the bill on the y axis
     function animate() {
         requestAnimationFrame( animate );
         renderer.render( sceneBill, cameraBill );
@@ -45,41 +54,48 @@
 
     animate();
  
- if ($('#quarter').click) {
-  //create scene
+
+    //Code for rotating coins
+    //create scene and persepctive camera
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
+    //create transparent renderer and fill div size, append to div 
     renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.querySelector('#quarter').appendChild(renderer.domElement);
     
+     //set camera position
     camera.position.z = 3;
     
+    //create new circle planes for front and back, size will vary based on how big coin is
     var front = new THREE.CircleGeometry(.5, 35);
     var back = new THREE.CircleGeometry(.5, 35);
 
+    //rotate the back circle
     back.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
 
+     //load texture images for front and back (front and back of bill)
+    //create new mesh material with those textures mapped on
     var textureFront = new THREE.TextureLoader().load('img/quarterfront.png' );      
     var textureBack = new THREE.TextureLoader().load('img/quarterback.png' );
 
     var material1 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: textureFront } );
     var material2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: textureBack } );
 
-    // card
+    // create a new 3D object
     coin = new THREE.Object3D();
 
-            // mesh
+    // create new mesh and add to coin object
     mesh1 = new THREE.Mesh( back, material1 );
     coin.add( mesh1 );
     mesh2 = new THREE.Mesh( front, material2 );
     coin.add( mesh2 );
 
-
+    //add to scene
     scene.add( coin );
 
-
+   //rotate the coin on the y axis
     function animate() {
       requestAnimationFrame( animate );
       renderer.render( scene, camera );
