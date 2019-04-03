@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<title>Canvas Paint App</title>
-	 <style>
+<meta charset="utf-8" />
+<title>Canvas Paint App</title>
+<style>
       body {
          background: #eeeeee;
          font-family: tahoma, verdana, sans serif;
@@ -18,7 +18,6 @@
          box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
       }
       
-      
        #controls {
          position: absolute;
           z-index: 2;
@@ -31,14 +30,14 @@
       	margin-right:0.75em;
       }
 
-	  #topCanvas {
-		  background: rgba(0, 0, 0, 0);
-		  position: absolute;
-		  left: 10px;
-		  top: 10px;
-		  z-index: 1;
-		  cursor: pointer;
-	  }
+      #topCanvas {
+	  background: rgba(0, 0, 0, 0);
+	  position: absolute;
+	  left: 10px;
+	  top: 10px;
+	  z-index: 1;
+	  cursor: pointer;
+       }
       
     </style>
     
@@ -47,7 +46,7 @@
 	window.onload = init;
 	
 	// GLOBALS
-	var canvas,ctx,dragging=false,lineWidth,strokeStyle, currentTool, fillStyle, origin, topCanvas, topCtx;
+	var canvas, ctx, dragging=false, lineWidth, strokeStyle, currentTool, fillStyle, origin, topCanvas, topCtx;
 	
 	// CONSTANTS
 	var DEFAULT_LINE_WIDTH = 3;
@@ -65,9 +64,11 @@
 		lineWidth = DEFAULT_LINE_WIDTH;
 		strokeStyle = DEFAULT_STROKE_STYLE;
 
+		//create a top canvas overlaying our base canvas
 		topCanvas = document.querySelector('#topCanvas');
 		topCtx = topCanvas.getContext('2d');
 
+		//set defaults and origin points
 		fillStyle = DEFAULT_FILL_STYLE;
 		currentTool = TOOL_PENCIL;
 		origin = {};
@@ -77,7 +78,7 @@
 		topCtx.strokeStyle = ctx.strokeStyle =  strokeStyle;
 		topCtx.fillStyle = ctx.fillStyle = fillStyle;
 		topCtx.lineCap = ctx.lineCap = "round"; // "butt", "round", "square"
-		topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter"
+		topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter
 
 		drawGrid(ctx, 'lightgray', 10, 10);
 
@@ -87,6 +88,7 @@
 		topCanvas.onmouseup = doMouseup;
 		topCanvas.onmouseout = doMouseout;	
 
+		//grab current tool
 		document.querySelector('#toolChooser').onchange = function (e) {
 			currentTool = e.target.value;
 			console.log("currentTool= " + currentTool);
@@ -141,6 +143,7 @@
 		}
 	}
  
+	//when the mouse is dragged on the screen, draw either the line/rect/freeform line and fill with the right color and stroke 
  	function doMousemove(e) {
  		if (! dragging) return;
 		var mouse = getMouse(e);
@@ -166,6 +169,7 @@
 				topCtx.lineWidth = lineWidth;
 
 				clearTopCanvas();
+				//clear the top canvas and move drawing to base canvas
 
 				topCtx.fillRect(x, y, w, h);
 				topCtx.strokeRect(x, y, w, h);
@@ -179,9 +183,10 @@
 				topCtx.beginPath();
 				topCtx.moveTo(origin.x, origin.y);
 				topCtx.lineTo(mouse.x, mouse.y);
-				topCtx.closePath();
+				topCtx.closePath(); //DO NOT forget to close path!
 
 				clearTopCanvas();
+				//clear the top canvas and move drawing to base canvas
 
 				topCtx.stroke();
 
@@ -190,6 +195,7 @@
 		}
 	}
 	
+	//when mouse is lifted, the mouse does not continue to draw
 	function doMouseup(e) {
 		switch(currentTool) {
 			case TOOL_PENCIL:
@@ -207,7 +213,7 @@
 			dragging = false;
 	}
 	
-	// if the user drags out of the canvas
+	// if the user drags out of the canvas, cut off the drawing
 	function doMouseout(e) {
 		switch(currentTool) {
 				case TOOL_PENCIL:
@@ -223,11 +229,12 @@
 			dragging = false;
 	}
 	
+	//clear the width and height of the canvas and redraw the grid
 	function doClear(){
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		drawGrid(ctx,'lightgray', 10, 10);
 	}
-	
+
 	function doExport(){
 		// open a new window and load the image in it
 		// http://www.w3schools.com/jsref/met_win_open.asp
@@ -284,10 +291,7 @@
 			ctx.stroke();
 		}
 
-		/*
-			Need horizontal lines!
-			You write it!
-		*/
+		//horizontal grid lines
 		for(var y = cellWidth + 0.5; y < ctx.canvas.height; y += cellWidth) {
 			ctx.beginPath();
 			ctx.moveTo(0, y);
