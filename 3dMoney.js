@@ -1,5 +1,6 @@
 
    //Code for rotating bills
+   //multi-plane and texture/mesh help from: https://stackoverflow.com/questions/11709760/how-can-i-put-two-different-textures-on-the-front-and-back-of-a-plane
 
     //create scene and persepctive camera
     var sceneBill = new THREE.Scene();
